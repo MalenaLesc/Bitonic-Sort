@@ -9,7 +9,7 @@ public class BitonicSortConcurrente {
     
     public static void main(String[] args) {
         
-        int tam = 16384; // El tamaño debe ser potencia de 2
+        int tam = 33554432; // El tamaño debe ser potencia de 2
         int[] array = new int[tam];
         Random rand = new Random();
         
@@ -20,26 +20,30 @@ public class BitonicSortConcurrente {
             array[i] = rand.nextInt(1000);
         }
 
-        System.out.println("Arreglo original:");
-        mostrarArreglo(array);
-                
-        // Inicia cronómetro para medir el tiempo de ejecución
-        long inicio = System.currentTimeMillis();
+        //System.out.println("Arreglo original:");
+        //mostrarArreglo(array);
 
         //ForkJoinPool pool = new ForkJoinPool(numHilos); Para utilizar una cantidad de hilos a eleccion
         
         ForkJoinPool pool = new ForkJoinPool(); //Utiliza una cantidad de hilos basada en la cantidad de procesadores de la maquina
-        
+
+        //Inicia cronómetro en nanosegundos
+        long inicio = System.nanoTime();
+
         // Ejecuta la tarea principal que ordena todo el arreglo en orden ascendente
         pool.invoke(new BitonicSortTask(array, 0, tam, ASCENDENTE));
 
-        System.out.println("Arreglo ordenado concurrentemente:");
-        mostrarArreglo(array);
-        
+        long fin = System.nanoTime();
+
+        //Muestra cantidad de núcleos disponibles
         System.out.println("Procesadores disponibles: " + Runtime.getRuntime().availableProcessors());
-        long fin = System.currentTimeMillis();
-        // Calcula el tiempo de ejecución en milisegundos
-        System.out.println("Tiempo de ejecución: " + (fin - inicio) + " ms");
+
+        //Calcula el tiempo en milisegundos con mayor precisión
+        double tiempoMs = (fin - inicio) / 1_000_000.0;
+        System.out.printf("Tiempo de ejecución: %.3f ms%n", tiempoMs);
+
+        System.out.println("Arreglo ya ordenado");
+        //mostrarArreglo(array);
 
     }
     
@@ -113,6 +117,7 @@ public class BitonicSortConcurrente {
                 
                 //divide la secuencia y vuelve a aplicar la fusión recursivamente en paralelo.
                 int k = cant / 2;
+                // Lanza dos tareas en paralelo para fusionar ambas mitades recursivamente
                 invokeAll(
                     new BitonicMergeTask(array, low, k, dir),
                     new BitonicMergeTask(array, low + k, k, dir)

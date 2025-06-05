@@ -11,7 +11,7 @@ public class BitonicSortSecuencial {
     // Método principal 
     public static void main(String[] args) {
         
-        int tam = 16; // El tamaño debe ser potencia de 2
+        int tam = 33554432; // El tamaño debe ser potencia de 2
         int[] array = new int[tam];
         Random rand = new Random();
 
@@ -20,14 +20,28 @@ public class BitonicSortSecuencial {
             array[i] = rand.nextInt(100);
         }
 
-        System.out.println("Arreglo original:");
-        mostrarArreglo(array);
+        //System.out.println("Arreglo original:");
+        //mostrarArreglo(array);
 
-        //Llamada al método de ordenamiento
+        //Inicia cronómetro en nanosegundos
+        long inicio = System.nanoTime();
+
+        //Llamada al método de ordenamiento 
         bitonicSort(array, 0, tam, ASCENDENTE);
 
-        System.out.println("Arreglo ordenado:");
-        mostrarArreglo(array);
+        long fin = System.nanoTime();
+
+        //Muestra cantidad de núcleos disponibles
+        System.out.println("Procesadores disponibles: " + Runtime.getRuntime().availableProcessors());
+
+        //Calcula el tiempo en milisegundos con mayor precisión
+        double tiempoMs = (fin - inicio) / 1_000_000.0;
+        System.out.printf("Tiempo de ejecución: %.3f ms%n", tiempoMs);
+
+        System.out.println("Arreglo ya ordenado");
+        //mostrarArreglo(array);
+
+        
     }
 
     //Método principal de Bitonic Sort (recursivo)
